@@ -36,17 +36,23 @@ export default function Home() {
     if (!signer) return;
     const domain = window.location.host;
     const origin = window.location.origin;
+    const nowTime = new Date(Date.now());
+    const expiredTime = new Date(Date.now() + 10 * 60 * 1000); // second
 
     const message = new SiweMessage({
       domain,
       address: signer.address,
-      statement: "Sign in with Ethereum to the app.",
+      statement: "Sign in with Ethereum.",
       uri: origin,
       version: "1",
       chainId: 1,
+      issuedAt: nowTime.toISOString(),
+      expirationTime: expiredTime.toISOString(),
     });
     const signedMessage = await signer.signMessage(message.prepareMessage());
-    console.log(" signedMessage: ", signedMessage);
+    localStorage.setItem("message", JSON.stringify(message.prepareMessage()));
+    console.log(" message : ", JSON.stringify(message.prepareMessage()));
+    console.log(" signedMessage : ", signedMessage);
     // TODO : call authentication backend api
   }
 
