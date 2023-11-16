@@ -33,6 +33,7 @@ const config = createConfig(
   })
 );
 
+const nowTime = new Date(Date.now());
 const expiredTime = new Date(Date.now() + 10 * 60 * 1000); // 簽名過期時間 10 minutes
 
 const siweConfig: SIWEConfig = {
@@ -47,11 +48,15 @@ const siweConfig: SIWEConfig = {
       nonce,
       // Human-readable ASCII assertion that the user will sign, and it must not contain `\n`.
       statement: "Sign in With Ethereum.",
+      issuedAt: nowTime.toISOString(),
       expirationTime: expiredTime.toISOString(),
     }).prepareMessage();
   },
 
   verifyMessage: async ({ message, signature }) => {
+    console.log(" message: ", message);
+    console.log(" signature: ", signature);
+    localStorage.setItem("message", JSON.stringify(message));
     // call backend authentication api to verify a signed message,
     // and you should get jwt when verifying success,
     // then store to cookie or localStorage and return true.
